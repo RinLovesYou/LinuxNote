@@ -29,7 +29,7 @@ namespace LinuxNote
 
             //Setup the versions
             Version latestGitHubVersion = new Version(releases[0].TagName);
-            Version localVersion = new Version("5.0.1");
+            Version localVersion = new Version("5.0.5");
             // weed release
 
             //Compare the Versions
