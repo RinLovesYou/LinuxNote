@@ -1,4 +1,4 @@
-﻿ 
+﻿
 using FFMpegCore;
 using Newtonsoft.Json;
 using Octokit;
@@ -13,119 +13,92 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using NDesk.Options;
+using System.Reflection;
+using NAudio.SoundFont;
 
 namespace LinuxNote
 {
     internal class Program
     {
-        //Github Update Checks
-        private static bool Update = false;
-        private static async Task UpdateCheck()
-        {
-            //Get all releases from GitHub
-            //Source: https://octokitnet.readthedocs.io/en/latest/getting-started/
-            GitHubClient client = new GitHubClient(new ProductHeaderValue("Update-Check"));
-            IReadOnlyList<Release> releases = await client.Repository.Release.GetAll("RinLovesYou", "Flipnote-Encoder");
-
-            //Setup the versions
-            Version latestGitHubVersion = new Version(releases[0].TagName);
-            Version localVersion = new Version("5.0.5");
-            // weed release
-
-            //Compare the Versions
-            //Source: https://stackoverflow.com/questions/7568147/compare-version-numbers-without-using-split-function
-            int versionComparison = localVersion.CompareTo(latestGitHubVersion);
-            if (versionComparison < 0)
-            {
-                Update = true;
-            }
-            else if (versionComparison > 0)
-            {
-                //not gonna happen
-            }
-            else
-            {
-                Update = false;
-            }
-        }
-
-        public static void OpenBrowser(string url)
-        {
-            try
-            {
-                Process.Start(url);
-            }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
         private static bool Running { get; set; }
         public static EncodeConfig FlipnoteConfig { get; set; }
 
+        public static string exedir = Process.GetCurrentProcess().MainModule.FileName.Replace("FlipnoteEncoder", "");
+
         private static void Main(string[] args)
         {
+            GlobalFFOptions.Configure(new FFOptions { BinaryFolder = $"{exedir}ffmpeg/bin" });
+            var show_help = false;
+            int colormode = 1;
+            int dithermode = 1;
+            string inputfile = string.Empty;
+
+
+            var p = new OptionSet
+            {
+                { "i=|input=", "Specify the input mp4 file", v => inputfile = v },
+                { "c=|color=", "Specify the Color Mode (1-5)", (int v) => colormode = v },
+                { "d=|dither=", "Specify the Dithering Mode (0-13)", (int v) => dithermode = v },
+                { "help",  "show this message and exit", v => show_help = v != null }
+            };
+
             try
             {
-                var task = UpdateCheck();
-                task.Wait();
+                p.Parse(args);
             }
-            catch (Exception e)
+            catch (OptionException e)
             {
-
+                Console.Write("bundling: ");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Try `FlipnoteEncoder --help' for more information.");
+                return;
             }
 
-            if (Update)
+            if (show_help)
             {
-                Console.WriteLine("A Newer Version is available! would you like to update? y/n");
-                var answer = Console.ReadKey(true);
-                if (answer.Key == ConsoleKey.Y)
-                {
-                        OpenBrowser("http://www.github.com/RinLovesYou/Flipnote-Encoder/releases/latest");          
-                    return;
-                }
+                Show_help(p);
+                return;
             }
 
 
-            Running = true;
+            FileInfo info = new FileInfo(inputfile);
 
-            GlobalFFOptions.Configure(new FFOptions { BinaryFolder = "ffmpeg/bin" });
+            var newEncodeConfig = new EncodeConfig();
+                newEncodeConfig.Accurate = true;
+                newEncodeConfig.DitheringMode = dithermode;
+                newEncodeConfig.ColorMode = colormode;
+                newEncodeConfig.Contrast = 0;
+                newEncodeConfig.InputFilename = $"input.mp4";
+                newEncodeConfig.InputFolder = $"{exedir}/frames";
+                newEncodeConfig.Split = false;
+                newEncodeConfig.DeleteOnFinish = true;
+                newEncodeConfig.SplitAmount = 2;
+                FlipnoteConfig = newEncodeConfig;
 
-            while (Running)
+            try 
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Clear();
+                info.CopyTo($"{exedir}/frames/input.mp4", true);
+                var encoder = new FlipnoteEncoder();
 
-                Console.WriteLine("What would you like to do?");
-                Console.WriteLine("1: Encode a video to Flipnote");
-                Console.WriteLine("2: Decode a Flipnote");
-                var Selection = Console.ReadKey(true);
-
-                switch (Selection.Key)
-                {
-                    case ConsoleKey.D1: EncodeFlipnote(); break;
-                    case ConsoleKey.D2: DecodeFlipnote(); break;
-                    default: break;
-                }
+                var encoded = encoder.Encode();
+                encoded.Save(info.DirectoryName+$"/{encoded.CurrentFilename}.ppm");
             }
+            catch(Exception e) 
+            {
+                Console.WriteLine($"{e.Message}\n{e.StackTrace}");
+            }
+
+
+            Cleanup();
+            info.Delete();
+
+
+        }
+        static void Show_help(OptionSet p)
+        {
+            Console.WriteLine("Parameterlist to use:");
+            p.WriteOptionDescriptions(Console.Out);
         }
 
         public static void EncodeFlipnote()
@@ -188,36 +161,37 @@ namespace LinuxNote
                 Console.ReadKey();
             }
             Cleanup();
+            
         }
 
         private static void Cleanup()
         {
-            if (Directory.Exists("tmp"))
+            if (Directory.Exists($"{exedir}/tmp"))
             {
                 try
                 {
-                    string[] files = Directory.EnumerateFiles("tmp").ToArray();
+                    string[] files = Directory.EnumerateFiles($"{exedir}/tmp").ToArray();
                     files.ToList().ForEach(f =>
                     {
                         File.Delete(f);
                     });
-                    Directory.Delete("tmp");
+                    Directory.Delete($"{exedir}/tmp");
                 }
                 catch (Exception e)
                 {
 
                 }
             }
-            if (Directory.Exists($"out/temp"))
+            if (Directory.Exists($"{exedir}/out/temp"))
             {
                 try
                 {
-                    string[] files = Directory.EnumerateFiles("out/temp").ToArray();
+                    string[] files = Directory.EnumerateFiles($"{exedir}/out/temp").ToArray();
                     files.ToList().ForEach(f =>
                     {
                         File.Delete(f);
                     });
-                    Directory.Delete("out/temp");
+                    Directory.Delete($"{exedir}/out/temp");
                 }
                 catch (Exception e)
                 {

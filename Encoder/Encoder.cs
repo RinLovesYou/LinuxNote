@@ -139,11 +139,11 @@ namespace LinuxNote.Encoder
                     Image<Rgba32> GrayImage = null;
                     try
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i}.png");
+                        GrayImage = (Image<Rgba32>)Image.Load($"{Program.exedir}/tmp/frame_{i}.png");
                     }
                     catch (Exception e)
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i - 1}.png");
+                        GrayImage = (Image<Rgba32>)Image.Load($"{Program.exedir}/tmp/frame_{i - 1}.png");
                     }
 
                     GrayImage.Mutate(x => x.BinaryThreshold(0.5f));
@@ -379,11 +379,11 @@ namespace LinuxNote.Encoder
                     Image<Rgba32> GrayImage = null;
                     try
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i}.png");
+                        GrayImage = (Image<Rgba32>)Image.Load($"{Program.exedir}/tmp/frame_{i}.png");
                     }
                     catch (Exception e)
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i - 1}.png");
+                        GrayImage = (Image<Rgba32>)Image.Load($"{Program.exedir}/tmp/frame_{i - 1}.png");
                     }
 
                     //Set all the funny pixels
@@ -549,11 +549,11 @@ namespace LinuxNote.Encoder
                 Image<Rgba32> GrayImage = null;
                 try
                 {
-                    GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i}.png");
+                    GrayImage = (Image<Rgba32>)Image.Load($"{Program.exedir}/tmp/frame_{i}.png");
                 }
                 catch (Exception e)
                 {
-                    GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i - 1}.png");
+                    GrayImage = (Image<Rgba32>)Image.Load($"{Program.exedir}/tmp/frame_{i - 1}.png");
                 }
 
                 GrayImage.Mutate(x => x.BinaryThreshold(0.5f));

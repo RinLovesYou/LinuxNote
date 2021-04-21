@@ -84,7 +84,7 @@ namespace LinuxNote.Encoder
             {
                 for (int i = 0; i < filenames.Length; i++)
                 {
-                    Directory.CreateDirectory("tmp");
+                    Directory.CreateDirectory($"{Program.exedir}/tmp");
                     using (Image<Rgba32> image = (Image<Rgba32>)Image.Load(filenames[i]))
                     {
                         Image<Rgba32> bw = image.Clone();
@@ -96,7 +96,7 @@ namespace LinuxNote.Encoder
                             }
                             x.BinaryDither(DitheringType);
                         });
-                        bw.Save($"tmp/frame_{i}.png");
+                        bw.Save($"{Program.exedir}/tmp/frame_{i}.png");
                         bw.Dispose();
 
                         image.Mutate(x =>
@@ -111,7 +111,7 @@ namespace LinuxNote.Encoder
                             x.Dither(DitheringType, Palette);
                         });
 
-                        image.SaveAsPng($"frames/frame_{i}.png");
+                        image.SaveAsPng($"{Program.exedir}/frames/frame_{i}.png");
                         image.Dispose();
                     }
                 }

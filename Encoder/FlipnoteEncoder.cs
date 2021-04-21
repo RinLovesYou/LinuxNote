@@ -30,11 +30,11 @@ namespace LinuxNote.Encoder
             Console.Write("Getting Dummy...");
             try
             {
-                var DummyPath = Directory.GetFiles("DummyFlipnote", "*.ppm");
+                var DummyPath = Directory.GetFiles($"{Program.exedir}/DummyFlipnote", "*.ppm");
                 Dummy.LoadFrom(DummyPath[0]);
                 Console.CursorLeft = 0;
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Dummy got!      ");
+                Console.WriteLine("Dummy got!           ");
             }
             catch (Exception e)
             {
