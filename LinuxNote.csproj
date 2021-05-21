@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FlipnoteEncoder</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -8,12 +8,12 @@
     <DebugType>embedded</DebugType>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PPMLib">
-      <HintPath>/home/rin/Documents/PPMLib/bin/Release/net5.0/PPMLib.dll</HintPath>
+      <HintPath>C:\Users\finti\source\repos\Encoder\PPMLib\bin\Debug\net5.0\PPMLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

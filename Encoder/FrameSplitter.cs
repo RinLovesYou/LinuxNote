@@ -29,7 +29,7 @@ namespace LinuxNote.Encoder
                 {
                     if (Config.Accurate)
                         o.WithFramerate(30);
-                    o.Resize(256, 192);
+                    o.Resize(new System.Drawing.Size(256, 192));
 
 
                 })

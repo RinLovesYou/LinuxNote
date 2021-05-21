@@ -176,7 +176,7 @@ namespace LinuxNote
                 var mp4try = new PPMFile();
                 mp4try.LoadFrom($"tmp/{encoded.CurrentFilename}.ppm");
                 Mp4Encoder mp4 = new Mp4Encoder(mp4try);
-                var a = mp4.EncodeMp4("out", 2);
+                var a = mp4.EncodeMp4("out");
             }
             else
             {
