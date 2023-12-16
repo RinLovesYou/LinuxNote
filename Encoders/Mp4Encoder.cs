@@ -67,19 +67,20 @@ namespace LinuxNote.Encoders
         {
             try
             {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                
                 if (!Directory.Exists($"{path}/temp"))
                 {
                     Directory.CreateDirectory($"{path}/temp");
                 }
                 else
                 {
-                    Cleanup();
+                    Cleanup(path);
                 }
 
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
 
                 for (int i = 0; i < Flipnote.FrameCount; i++)
                 {
@@ -90,14 +91,15 @@ namespace LinuxNote.Encoders
                     }
                     catch (Exception e)
                     {
-
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine(e.StackTrace);
                     }
 
                 }
 
                 var frames = Directory.EnumerateFiles($"{path}/temp").ToArray();
                 Utils.NumericalSort(frames);
-
+                
                 File.WriteAllBytes($"{path}/temp/audio.wav", Flipnote.Audio.GetWavBGM(Flipnote));
 
                 var a = FFMpegArguments
@@ -116,7 +118,7 @@ namespace LinuxNote.Encoders
 
                 var mp4 = File.ReadAllBytes($"{path}/{Flipnote.CurrentFilename}.mp4");
 
-                Cleanup();
+                Cleanup(path);
 
                 return mp4;
 
@@ -124,7 +126,7 @@ namespace LinuxNote.Encoders
             }
             catch (Exception e)
             {
-                Cleanup();
+                Cleanup(path);
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
                 return null;
@@ -132,14 +134,14 @@ namespace LinuxNote.Encoders
         }
 
 
-        private void Cleanup()
+        private void Cleanup(string path)
         {
-            if (!Directory.Exists("temp"))
+            if (!Directory.Exists($"{path}/temp"))
             {
                 return;
             }
-            var files = Directory.EnumerateFiles("temp");
-
+            var files = Directory.EnumerateFiles($"{path}/temp");
+            
             files.ToList().ForEach(file =>
             {
                 try
@@ -150,9 +152,9 @@ namespace LinuxNote.Encoders
                 {
                     // idk yet
                 }
-
+            
             });
-            Directory.Delete("temp");
+            Directory.Delete($"{path}/temp");
         }
     }
 }

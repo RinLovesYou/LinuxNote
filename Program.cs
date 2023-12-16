@@ -112,6 +112,8 @@ namespace LinuxNote
             while (Running)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Press Any Key to Continue...");
+                Console.ReadKey();
                 Console.Clear();
 
                 Console.WriteLine("What would you like to do?");
@@ -176,7 +178,7 @@ namespace LinuxNote
                 var mp4try = new PPMFile();
                 mp4try.LoadFrom($"tmp/{encoded.CurrentFilename}.ppm");
                 Mp4Encoder mp4 = new Mp4Encoder(mp4try);
-                var a = mp4.EncodeMp4("out");
+                var a = mp4.EncodeMp4(Path.Combine(Directory.GetCurrentDirectory(), "out"));
             }
             else
             {
@@ -205,23 +207,7 @@ namespace LinuxNote
                 }
                 catch (Exception e)
                 {
-
-                }
-            }
-            if (Directory.Exists($"out/temp"))
-            {
-                try
-                {
-                    string[] files = Directory.EnumerateFiles("out/temp").ToArray();
-                    files.ToList().ForEach(f =>
-                    {
-                        File.Delete(f);
-                    });
-                    Directory.Delete("out/temp");
-                }
-                catch (Exception e)
-                {
-
+            
                 }
             }
 
@@ -245,6 +231,13 @@ namespace LinuxNote
 
         private static void DecodeFlipnote()
         {
+            Console.WriteLine("Please enter the path to the flipnote you would like to decode");
+            var path = Console.ReadLine();
+            
+            var mp4try = new PPMFile();
+            mp4try.LoadFrom(path);
+            Mp4Encoder mp4 = new Mp4Encoder(mp4try);
+            var a = mp4.EncodeMp4(Path.Combine(Directory.GetCurrentDirectory(), "out"));
         }
 
         private static void CreateEncodeConfig()
