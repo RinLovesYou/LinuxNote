@@ -135,15 +135,15 @@ namespace LinuxNote.Encoder
                     Rgba32 ColorBlack = Rgba32.ParseHex("#000000");
                     Rgba32 ColorWhite = Rgba32.ParseHex("FFFFFF");
 
-                    var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i+1}.png");
+                    var ColorImage = Image.Load<Rgba32>($"{Folder}/frame_{i+1}.png");
                     Image<Rgba32> GrayImage = null;
                     try
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i+1}.png");
+                        GrayImage = Image.Load<Rgba32>($"tmp/frame_{i+1}.png");
                     }
                     catch (Exception e)
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i - 1}.png");
+                        GrayImage = Image.Load<Rgba32>($"tmp/frame_{i - 1}.png");
                     }
 
                     GrayImage.Mutate(x => x.BinaryThreshold(0.5f));
@@ -375,15 +375,15 @@ namespace LinuxNote.Encoder
                     Rgba32 ColorBlack = Rgba32.ParseHex("#000000");
                     Rgba32 ColorWhite = Rgba32.ParseHex("FFFFFF");
 
-                    var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i+1}.png");
+                    var ColorImage = Image.Load<Rgba32>($"{Folder}/frame_{i+1}.png");
                     Image<Rgba32> GrayImage = null;
                     try
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i+1}.png");
+                        GrayImage = Image.Load<Rgba32>($"tmp/frame_{i+1}.png");
                     }
                     catch (Exception e)
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i - 1}.png");
+                        GrayImage = Image.Load<Rgba32>($"tmp/frame_{i - 1}.png");
                     }
 
                     //Set all the funny pixels
