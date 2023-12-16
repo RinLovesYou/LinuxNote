@@ -135,11 +135,11 @@ namespace LinuxNote.Encoder
                     Rgba32 ColorBlack = Rgba32.ParseHex("#000000");
                     Rgba32 ColorWhite = Rgba32.ParseHex("FFFFFF");
 
-                    var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i}.png");
+                    var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i+1}.png");
                     Image<Rgba32> GrayImage = null;
                     try
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i}.png");
+                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i+1}.png");
                     }
                     catch (Exception e)
                     {
@@ -375,11 +375,11 @@ namespace LinuxNote.Encoder
                     Rgba32 ColorBlack = Rgba32.ParseHex("#000000");
                     Rgba32 ColorWhite = Rgba32.ParseHex("FFFFFF");
 
-                    var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i}.png");
+                    var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i+1}.png");
                     Image<Rgba32> GrayImage = null;
                     try
                     {
-                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i}.png");
+                        GrayImage = (Image<Rgba32>)Image.Load($"tmp/frame_{i+1}.png");
                     }
                     catch (Exception e)
                     {
@@ -754,8 +754,15 @@ namespace LinuxNote.Encoder
                 Rgba32 ColorRed = Rgba32.ParseHex("#FF0000");
                 Rgba32 ColorBlack = Rgba32.ParseHex("#000000");
                 Rgba32 ColorWhite = Rgba32.ParseHex("FFFFFF");
-
-                var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i}.png");
+                Image<Rgba32> ColorImage;
+                try
+                {
+                    ColorImage = Image.Load<Rgba32>($"{Folder}/frame_{i + 1}.png");
+                }
+                catch (Exception e)
+                {
+                    ColorImage = Image.Load<Rgba32>($"{Folder}/frame_{i}.png");
+                }
                 int black = 0;
                 int white = 0;
                 for (int x = 0; x < 256; x++)
@@ -873,8 +880,15 @@ namespace LinuxNote.Encoder
             for (int i = 0; i < images.Length; i++)
             {
                 PPMFrame frame = new PPMFrame();
-
-                var ColorImage = (Image<Rgba32>)Image.Load($"{Folder}/frame_{i}.png");
+                Image<Rgba32> ColorImage;
+                try
+                {
+                    ColorImage = Image.Load<Rgba32>($"{Folder}/frame_{i + 1}.png");
+                }
+                catch (Exception e)
+                {
+                    ColorImage = Image.Load<Rgba32>($"{Folder}/frame_{i}.png");
+                }
 
                 int white = 0;
                 int black = 0;
