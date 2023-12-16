@@ -85,7 +85,7 @@ namespace LinuxNote.Encoders
                 {
                     try
                     {
-                        PPMRenderer.GetFrameImage(Flipnote.Frames[i]).SaveAsPng($"{path}/temp/frame_{i}.png");
+                        PPMRenderer.GetFrameBitmap(Flipnote.Frames[i]).SaveAsPng($"{path}/temp/frame_{i}.png");
                         
                     }
                     catch (Exception e)

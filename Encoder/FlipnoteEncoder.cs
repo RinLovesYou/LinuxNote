@@ -81,6 +81,8 @@ namespace LinuxNote.Encoder
                 Console.CursorLeft = 0;
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Could not dither Frames!");
+                
+                File.WriteAllText("error.log", e.Message + "\n" + e.StackTrace);
             }
 
 

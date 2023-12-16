@@ -80,40 +80,47 @@ namespace LinuxNote.Encoder
             colors.Add(Color.Black);
             colors.Add(Color.White);
             colors.Add(Color.Blue);
+            Directory.CreateDirectory("tmp");
             if (DitheringType != null)
             {
                 for (int i = 0; i < filenames.Length; i++)
                 {
-                    Directory.CreateDirectory("tmp");
-                    using (Image<Rgba32> image = (Image<Rgba32>)Image.Load(filenames[i]))
+                    Image<Rgba32> image;
+                    try
                     {
-                        Image<Rgba32> bw = image.Clone();
-                        bw.Mutate(x =>
-                        {
-                            if (contrast != 0)
-                            {
-                                x.Contrast(contrast);
-                            }
-                            x.BinaryDither(DitheringType);
-                        });
-                        bw.Save($"tmp/frame_{i}.png");
-                        bw.Dispose();
-
-                        image.Mutate(x =>
-                        {
-                            if (contrast != 0)
-                            {
-                                x.Contrast(contrast);
-                            }
-                            //x.BinaryDither(DitheringType);
-                            var Palette = new ReadOnlyMemory<Color>(colors.ToArray());
-
-                            x.Dither(DitheringType, Palette);
-                        });
-
-                        image.SaveAsPng($"frames/frame_{i}.png");
-                        image.Dispose();
+                        image = Image.Load<Rgba32>(filenames[i + 1]);
                     }
+                    catch (Exception e)
+                    {
+                        continue;
+                    }
+                    
+                    Image<Rgba32> bw = image.Clone();
+                    bw.Mutate(x =>
+                    {
+                        if (contrast != 0)
+                        {
+                            x.Contrast(contrast);
+                        }
+                        x.BinaryDither(DitheringType);
+                    });
+                    bw.SaveAsPng($"tmp/frame_{i+1}.png");
+                    bw.Dispose();
+
+                    image.Mutate(x =>
+                    {
+                        if (contrast != 0)
+                        {
+                            x.Contrast(contrast);
+                        }
+                        //x.BinaryDither(DitheringType);
+                        var Palette = new ReadOnlyMemory<Color>(colors.ToArray());
+
+                        x.Dither(DitheringType, Palette);
+                    });
+
+                    image.SaveAsPng($"frames/frame_{i+1}.png");
+                    image.Dispose();
                 }
             }
 
@@ -190,23 +197,29 @@ namespace LinuxNote.Encoder
 
             for (int i = 0; i < filenames.Length; i++)
             {
-                using (Image<Rgba32> image = (Image<Rgba32>)Image.Load(filenames[i]))
+                Image<Rgba32> image;
+                try
                 {
-                    image.Mutate(x =>
-                     {
-                         if (contrast != 0)
-                         {
-                             x.Contrast(contrast);
-                         }
-                         //x.BinaryDither(DitheringType);
-                         var Palette = new ReadOnlyMemory<Color>(colors.ToArray());
-
-
-                         x.Dither(DitheringType, Palette);
-                     });
-                    image.SaveAsPng($"frames/frame_{i}.png");
-                    image.Dispose();
+                    image = Image.Load<Rgba32>(filenames[i + 1]);
                 }
+                catch (Exception e)
+                {
+                    continue;
+                }
+                image.Mutate(x =>
+                {
+                    if (contrast != 0)
+                    {
+                        x.Contrast(contrast);
+                    }
+                    //x.BinaryDither(DitheringType);
+                    var Palette = new ReadOnlyMemory<Color>(colors.ToArray());
+
+
+                    x.Dither(DitheringType, Palette);
+                });
+                image.SaveAsPng($"frames/frame_{i+1}.png");
+                image.Dispose();
             }
         }
 
@@ -273,27 +286,32 @@ namespace LinuxNote.Encoder
 
             for (int i = 0; i < filenames.Length; i++)
             {
-                using (Image<Rgba32> image = (Image<Rgba32>)Image.Load(filenames[i]))
+                Image<Rgba32> image;
+                try
                 {
-
-                    image.Mutate(x =>
-                    {
-                        if (contrast != 0)
-                        {
-                            x.Contrast(contrast);
-                        }
-                        if(DitheringType == null)
-                        {
-                            x.AdaptiveThreshold();
-                        } else
-                        {
-                            x.BinaryDither(DitheringType);
-                        }
-                        
-                    });
-                    image.SaveAsPng($"{Folder}/frame_{i}.png");
-                    image.Dispose();
+                    image = Image.Load<Rgba32>(filenames[i + 1]);
                 }
+                catch (Exception e)
+                {
+                    continue;
+                }
+                image.Mutate(x =>
+                {
+                    if (contrast != 0)
+                    {
+                        x.Contrast(contrast);
+                    }
+                    if(DitheringType == null)
+                    {
+                        x.AdaptiveThreshold();
+                    } else
+                    {
+                        x.BinaryDither(DitheringType);
+                    }
+                        
+                });
+                image.SaveAsPng($"{Folder}/frame_{i+1}.png");
+                image.Dispose();
             }
             return true;
         }
